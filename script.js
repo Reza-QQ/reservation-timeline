@@ -356,9 +356,17 @@ $(document).ready(function () {
   }
   
   function updateClockHand() {
-    const value = currentMode === 'hour' ? selectedHour : selectedMinute;
-    const total = currentMode === 'hour' ? 24 : 60;
-    const angle = (value / total) * 360 - 90;
+    let angle;
+    
+    if (currentMode === 'hour') {
+      // Convert 24-hour to 12-hour position for the clock hand
+      const hour12 = selectedHour % 12 || 12;
+      angle = (hour12 / 12) * 360 - 90;
+    } else {
+      // Minutes
+      angle = (selectedMinute / 60) * 360 - 90;
+    }
+    
     $('#clockHand').css('transform', `translateX(-50%) rotate(${angle}deg)`);
   }
   
