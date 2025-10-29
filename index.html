@@ -41,10 +41,10 @@
       <input type="text" id="appNameInput" class="modal-input">
 
       <label>ساعت شروع:</label>
-      <input type="time" id="startTableTimeInput" class="modal-input">
+      <input type="text" id="startTableTimeInput" class="modal-input time-input" readonly placeholder="00:00">
 
       <label>ساعت پایان:</label>
-      <input type="time" id="endTableTimeInput" class="modal-input">
+      <input type="text" id="endTableTimeInput" class="modal-input time-input" readonly placeholder="00:00">
 
       <div class="modal-actions">
         <button id="saveSettingsBtn" class="btn-save">ذخیره تنظیمات</button>
@@ -93,11 +93,11 @@
       <div class="time-row">
         <div class="time-group">
           <label>ساعت شروع:</label>
-          <input type="time" id="startReserveTimeInput" class="modal-input">
+          <input type="text" id="startReserveTimeInput" class="modal-input time-input" readonly placeholder="00:00">
         </div>
         <div class="time-group">
           <label>ساعت پایان:</label>
-          <input type="time" id="endReserveTimeInput" class="modal-input">
+          <input type="text" id="endReserveTimeInput" class="modal-input time-input" readonly placeholder="00:00">
         </div>
       </div>
 
@@ -120,11 +120,11 @@
       <div class="time-row">
         <div class="time-group">
           <label>ساعت شروع:</label>
-          <input type="time" id="editStartReserveTimeInput" class="modal-input">
+          <input type="text" id="editStartReserveTimeInput" class="modal-input time-input" readonly placeholder="00:00">
         </div>
         <div class="time-group">
           <label>ساعت پایان:</label>
-          <input type="time" id="editEndReserveTimeInput" class="modal-input">
+          <input type="text" id="editEndReserveTimeInput" class="modal-input time-input" readonly placeholder="00:00">
         </div>
       </div>
 
@@ -132,6 +132,32 @@
         <button id="saveEditReserveBtn" class="btn-save">ذخیره</button>
         <button id="cancelEditReserveBtn" class="btn-cancel">لغو</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Circular Time Picker -->
+  <div class="time-picker-overlay" id="timePickerOverlay"></div>
+  <div class="circular-time-picker" id="circularTimePicker">
+    <div class="time-picker-header">
+      <h3>انتخاب زمان</h3>
+      <div class="time-display" id="timeDisplay">00:00</div>
+    </div>
+    
+    <div class="time-picker-mode">
+      <button class="mode-btn active" data-mode="hour">ساعت</button>
+      <button class="mode-btn" data-mode="minute">دقیقه</button>
+    </div>
+    
+    <div class="clock-container">
+      <div class="clock-face"></div>
+      <div class="clock-center"></div>
+      <div class="clock-hand hour-hand" id="clockHand"></div>
+      <div id="clockNumbers"></div>
+    </div>
+    
+    <div class="time-picker-actions">
+      <button class="btn-cancel" id="cancelTimePicker" style="flex: 1;">لغو</button>
+      <button class="btn-save" id="confirmTimePicker" style="flex: 1;">تأیید</button>
     </div>
   </div>
 

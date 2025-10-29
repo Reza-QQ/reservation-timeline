@@ -9,6 +9,93 @@
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
 
+  // Modern tooltip function
+  let currentTooltip = null;
+  
+  function showModernTooltip(element, text) {
+    hideModernTooltip();
+    
+    const tooltip = $('<div class="modern-tooltip"></div>').text(text);
+    $('body').append(tooltip);
+    
+    const rect = element.getBoundingClientRect();
+    const tooltipWidth = tooltip.outerWidth();
+    
+    tooltip.css({
+      left: rect.left + (rect.width / 2) - (tooltipWidth / 2),
+      top: rect.top - tooltip.outerHeight() - 10
+    });
+    
+    setTimeout(() => tooltip.addClass('show'), 10);
+    currentTooltip = tooltip;
+  }
+  
+  function hideModernTooltip() {
+    if (currentTooltip) {
+      currentTooltip.removeClass('show');
+      setTimeout(() => currentTooltip.remove(), 300);
+      currentTooltip = null;
+    }
+  }
+
+  // Check if text fits in element
+  function adjustReservationBarText() {
+    $('.reservation-bar.reserved, .reservation-bar.free').each(function() {
+      const $bar = $(this);
+      const barWidth = $bar.width();
+      const $startTime = $bar.find('span:first');
+      const $customer = $bar.find('span:eq(1)');
+      const $endTime = $bar.find('span:last');
+      
+      // Reset classes
+      $startTime.removeClass('vertical hidden');
+      $customer.removeClass('hidden');
+      $endTime.removeClass('vertical hidden');
+      
+      const fullText = `${$startTime.text()} - ${$customer.text()} - ${$endTime.text()}`;
+      
+      // Very small blocks (less than 60px) - hide all text but show tooltip
+      if (barWidth < 60) {
+        $startTime.addClass('hidden');
+        $customer.addClass('hidden');
+        $endTime.addClass('hidden');
+        
+        $bar.off('mouseenter mouseleave').hover(
+          function(e) { showModernTooltip(this, fullText); },
+          function() { hideModernTooltip(); }
+        );
+      }
+      // Small blocks (60-120px) - make times vertical, truncate customer
+      else if (barWidth < 120) {
+        $startTime.addClass('vertical');
+        $endTime.addClass('vertical');
+        
+        const customerText = $customer.text();
+        if (customerText.length > 3) {
+          $customer.text(customerText.substring(0, 3) + '...');
+        }
+        
+        $bar.off('mouseenter mouseleave').hover(
+          function(e) { showModernTooltip(this, fullText); },
+          function() { hideModernTooltip(); }
+        );
+      }
+      // Medium blocks (120-200px) - truncate customer name
+      else if (barWidth < 200) {
+        const customerText = $customer.text();
+        const maxChars = Math.floor(barWidth / 15);
+        if (customerText.length > maxChars) {
+          $customer.text(customerText.substring(0, maxChars) + '...');
+          
+          $bar.off('mouseenter mouseleave').hover(
+            function(e) { showModernTooltip(this, fullText); },
+            function() { hideModernTooltip(); }
+          );
+        }
+      }
+    });
+  }
+
   function loadTables() {
     $.getJSON('settings.json?' + new Date().getTime(), function (settings) {
       const startTime = settings.start_time || '08:00';
@@ -105,13 +192,139 @@
 
             $('#contentArea').append(tableDiv);
           });
+          
+          // Adjust text after rendering
+          setTimeout(adjustReservationBarText, 100);
         });
       });
     });
   }
+  
+  // Window resize handler
+  $(window).on('resize', function() {
+    adjustReservationBarText();
+  });
 
 
 $(document).ready(function () {
+
+  // Circular Time Picker
+  let currentTimeInput = null;
+  let selectedHour = 0;
+  let selectedMinute = 0;
+  let currentMode = 'hour';
+  
+  function initCircularTimePicker() {
+    renderClockNumbers('hour');
+    
+    $('.mode-btn').on('click', function() {
+      $('.mode-btn').removeClass('active');
+      $(this).addClass('active');
+      currentMode = $(this).data('mode');
+      renderClockNumbers(currentMode);
+      updateClockHand();
+    });
+    
+    $('#confirmTimePicker').on('click', function() {
+      if (currentTimeInput) {
+        const timeStr = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;
+        $(currentTimeInput).val(timeStr);
+      }
+      closeTimePicker();
+    });
+    
+    $('#cancelTimePicker, #timePickerOverlay').on('click', function() {
+      closeTimePicker();
+    });
+  }
+  
+  function renderClockNumbers(mode) {
+    const $container = $('#clockNumbers');
+    $container.empty();
+    
+    const numbers = mode === 'hour' ? 24 : 60;
+    const step = mode === 'hour' ? 1 : 5;
+    const radius = 120;
+    
+    for (let i = 0; i < numbers; i += step) {
+      const angle = (i / (mode === 'hour' ? 24 : 60)) * 360 - 90;
+      const radian = (angle * Math.PI) / 180;
+      const x = 140 + radius * Math.cos(radian) - 16;
+      const y = 140 + radius * Math.sin(radian) - 16;
+      
+      const $number = $(`<div class="clock-number" data-value="${i}">${i}</div>`);
+      $number.css({ left: x + 'px', top: y + 'px' });
+      
+      if ((mode === 'hour' && i === selectedHour) || (mode === 'minute' && i === selectedMinute)) {
+        $number.addClass('selected');
+      }
+      
+      $number.on('click', function() {
+        const value = parseInt($(this).data('value'));
+        if (mode === 'hour') {
+          selectedHour = value;
+        } else {
+          selectedMinute = value;
+        }
+        updateTimeDisplay();
+        updateClockHand();
+        renderClockNumbers(mode);
+        
+        // Auto-switch to minute mode after selecting hour
+        if (mode === 'hour') {
+          setTimeout(() => {
+            $('.mode-btn[data-mode="minute"]').click();
+          }, 300);
+        }
+      });
+      
+      $container.append($number);
+    }
+  }
+  
+  function updateClockHand() {
+    const value = currentMode === 'hour' ? selectedHour : selectedMinute;
+    const total = currentMode === 'hour' ? 24 : 60;
+    const angle = (value / total) * 360 - 90;
+    $('#clockHand').css('transform', `translateX(-50%) rotate(${angle}deg)`);
+  }
+  
+  function updateTimeDisplay() {
+    const timeStr = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;
+    $('#timeDisplay').text(timeStr);
+  }
+  
+  function openTimePicker(input) {
+    currentTimeInput = input;
+    const currentValue = $(input).val() || '00:00';
+    const [h, m] = currentValue.split(':').map(Number);
+    selectedHour = h;
+    selectedMinute = m;
+    currentMode = 'hour';
+    
+    $('.mode-btn').removeClass('active');
+    $('.mode-btn[data-mode="hour"]').addClass('active');
+    
+    updateTimeDisplay();
+    renderClockNumbers('hour');
+    updateClockHand();
+    
+    $('#timePickerOverlay').addClass('show');
+    $('#circularTimePicker').addClass('show');
+  }
+  
+  function closeTimePicker() {
+    $('#timePickerOverlay').removeClass('show');
+    $('#circularTimePicker').removeClass('show');
+    currentTimeInput = null;
+  }
+  
+  // Attach to all time inputs
+  $(document).on('click', '.time-input', function() {
+    openTimePicker(this);
+  });
+  
+  initCircularTimePicker();
 
   function updateClock() {
     const now = new Date();
@@ -122,8 +335,8 @@ $(document).ready(function () {
     $('#clock').text(timeString);
   }
 
-  updateClock(); // نمایش اولیه
-  setInterval(updateClock, 10000); // به‌روزرسانی هر دقیقه
+  updateClock();
+  setInterval(updateClock, 10000);
 
 
 
