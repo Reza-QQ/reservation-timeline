@@ -581,7 +581,6 @@ main {
 
 .circular-time-picker.show {
   display: block;
-  animation: slideUp 0.3s ease;
 }
 
 .time-picker-header {
