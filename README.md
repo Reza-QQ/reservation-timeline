@@ -28,26 +28,71 @@ npm start
 ---
 
 ## 🇬🇧 English
+# Reservation Timeline - تایم‌لاین رزرو
 
-**Reservation Timeline** is a reservation management app designed for booking tables at restaurants, billiard clubs, or any reservable space throughout the day.
+## Project Overview
+**Reservation Timeline** is a table reservation management application designed for restaurants, billiard clubs, or any venue that needs to manage time-based reservations throughout the day. The application features a visual timeline interface that shows available and booked time slots.
 
-### 🎯 Project Goals
+## Current State
+✅ **Fully functional and deployed on Replit**
+- PHP 8.2 backend running on port 5000
+- Frontend serving static HTML/CSS/JS with Persian (RTL) interface
+- Data storage using JSON files (no database required)
+- Working table management, reservation system, and settings
 
-This project aims to simplify the reservation process and help users manage daily schedules. Users can easily view available time slots, make reservations, and browse archived bookings.
+## Tech Stack
+- **Frontend**: HTML5, CSS3, JavaScript (jQuery 3.6.0)
+- **Backend**: PHP 8.2
+- **Data Storage**: JSON files (settings.json, table.json, reservations.json)
+- **Server**: PHP built-in development server
 
-### 🛠 Features
+## Project Architecture
 
-- Reserve time slots for tables or spaces  
-- Support for various venues (restaurants, clubs, meeting rooms, etc.)  
-- Automatic archiving of past reservations  
-- Searchable reservation history  
-- Simple and extensible user interface  
-
-### 📦 Installation
-
-```bash
-git clone https://github.com/your-username/reservation-timeline.git  
-cd reservation-timeline  
-npm install  
-npm start  
+### File Structure
 ```
+.
+├── index.html              # Main application UI
+├── style.css               # Application styling (RTL Persian)
+├── script.js               # Frontend logic and AJAX calls
+├── save_settings.php       # Settings management endpoint
+├── save_table.php          # Create new table endpoint
+├── save_reservation.php    # Create reservation endpoint
+├── delete_table.php        # Delete table endpoint
+├── settings.json           # App configuration storage
+├── table.json              # Tables data storage
+└── reservations.json       # Reservations data storage
+```
+
+### Key Features
+1. **Table Management**: Add and delete tables/spaces
+2. **Reservation System**: Book time slots with conflict detection
+3. **Visual Timeline**: See free and booked time slots at a glance
+4. **Settings**: Configure app name, start time, and end time
+5. **Persian Interface**: Full RTL (Right-to-Left) support
+
+### Data Flow
+- Frontend (JavaScript/jQuery) → AJAX requests → PHP endpoints → JSON file storage
+- No external database needed - uses file-based JSON storage
+- Automatic conflict detection prevents double-booking
+
+## Development Setup
+The application runs on Replit with:
+- Workflow: `php -S 0.0.0.0:5000` (PHP built-in server on port 5000)
+- No build step required
+- No package manager dependencies
+
+## Recent Changes
+- **2025-10-29**: Initial Replit setup
+  - Installed PHP 8.2
+  - Configured workflow to run on port 5000
+  - Verified all features working (table management, reservations, settings)
+  - Set up deployment configuration for production
+
+## User Preferences
+- None documented yet
+
+## Notes
+- The application uses jQuery loaded from CDN (no npm dependencies)
+- All text is in Persian (Farsi) with RTL layout
+- Time slots are customizable through settings
+- Reservations are validated for time conflicts on the backend
