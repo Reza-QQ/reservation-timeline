@@ -2,3 +2,23 @@
 /www3.rar
 /www4.rar
 /www5.rar
+
+# PHP
+*.log
+*.cache
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Replit
+.config/
+.cache/
+.upm/
