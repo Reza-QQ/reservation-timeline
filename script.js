@@ -113,8 +113,8 @@
             const tableDiv = $(`
               <div class="table-box" data-id="${table.id}">
                 <div class="table-actions">
-                  <button class="btn-reserve" data-id="${table.id}">رزرو ${table.name}</button>
                   <button class="btn-delete" data-id="${table.id}">حذف میز</button>
+                  <button class="btn-reserve" data-id="${table.id}">رزرو ${table.name}</button>
                 </div>
                 <div class="table-reservation" id="reservation-${table.id}">
                   <div class="reservation-track">
@@ -242,43 +242,116 @@ $(document).ready(function () {
     const $container = $('#clockNumbers');
     $container.empty();
     
-    const numbers = mode === 'hour' ? 24 : 60;
-    const step = mode === 'hour' ? 1 : 5;
-    const radius = 120;
-    
-    for (let i = 0; i < numbers; i += step) {
-      const angle = (i / (mode === 'hour' ? 24 : 60)) * 360 - 90;
-      const radian = (angle * Math.PI) / 180;
-      const x = 140 + radius * Math.cos(radian) - 16;
-      const y = 140 + radius * Math.sin(radian) - 16;
-      
-      const $number = $(`<div class="clock-number" data-value="${i}">${i}</div>`);
-      $number.css({ left: x + 'px', top: y + 'px' });
-      
-      if ((mode === 'hour' && i === selectedHour) || (mode === 'minute' && i === selectedMinute)) {
-        $number.addClass('selected');
+    if (mode === 'hour') {
+      // Two concentric circles for 24-hour format
+      // Inner circle: 1-12
+      const innerRadius = 80;
+      for (let i = 1; i <= 12; i++) {
+        const angle = (i / 12) * 360 - 90;
+        const radian = (angle * Math.PI) / 180;
+        const x = 140 + innerRadius * Math.cos(radian) - 16;
+        const y = 140 + innerRadius * Math.sin(radian) - 16;
+        
+        const $number = $(`<div class="clock-number" data-value="${i}">${i}</div>`);
+        $number.css({ left: x + 'px', top: y + 'px' });
+        
+        if (i === selectedHour) {
+          $number.addClass('selected');
+        }
+        
+        $number.on('click', function() {
+          selectedHour = parseInt($(this).data('value'));
+          updateTimeDisplay();
+          updateClockHand();
+          renderClockNumbers(mode);
+          
+          setTimeout(() => {
+            $('.mode-btn[data-mode="minute"]').click();
+          }, 300);
+        });
+        
+        $container.append($number);
       }
       
-      $number.on('click', function() {
-        const value = parseInt($(this).data('value'));
-        if (mode === 'hour') {
-          selectedHour = value;
-        } else {
-          selectedMinute = value;
+      // Outer circle: 13-23 and 0
+      const outerRadius = 120;
+      for (let i = 13; i <= 23; i++) {
+        const angle = ((i - 12) / 12) * 360 - 90;
+        const radian = (angle * Math.PI) / 180;
+        const x = 140 + outerRadius * Math.cos(radian) - 16;
+        const y = 140 + outerRadius * Math.sin(radian) - 16;
+        
+        const $number = $(`<div class="clock-number" data-value="${i}">${i}</div>`);
+        $number.css({ left: x + 'px', top: y + 'px' });
+        
+        if (i === selectedHour) {
+          $number.addClass('selected');
         }
+        
+        $number.on('click', function() {
+          selectedHour = parseInt($(this).data('value'));
+          updateTimeDisplay();
+          updateClockHand();
+          renderClockNumbers(mode);
+          
+          setTimeout(() => {
+            $('.mode-btn[data-mode="minute"]').click();
+          }, 300);
+        });
+        
+        $container.append($number);
+      }
+      
+      // Add 0 (midnight) at 12 o'clock position on outer circle
+      const angle0 = (12 / 12) * 360 - 90;
+      const radian0 = (angle0 * Math.PI) / 180;
+      const x0 = 140 + outerRadius * Math.cos(radian0) - 16;
+      const y0 = 140 + outerRadius * Math.sin(radian0) - 16;
+      
+      const $number0 = $(`<div class="clock-number" data-value="0">00</div>`);
+      $number0.css({ left: x0 + 'px', top: y0 + 'px' });
+      
+      if (selectedHour === 0) {
+        $number0.addClass('selected');
+      }
+      
+      $number0.on('click', function() {
+        selectedHour = 0;
         updateTimeDisplay();
         updateClockHand();
         renderClockNumbers(mode);
         
-        // Auto-switch to minute mode after selecting hour
-        if (mode === 'hour') {
-          setTimeout(() => {
-            $('.mode-btn[data-mode="minute"]').click();
-          }, 300);
-        }
+        setTimeout(() => {
+          $('.mode-btn[data-mode="minute"]').click();
+        }, 300);
       });
       
-      $container.append($number);
+      $container.append($number0);
+    } else {
+      // Minutes: single circle with 5-minute intervals
+      const radius = 120;
+      for (let i = 0; i < 60; i += 5) {
+        const angle = (i / 60) * 360 - 90;
+        const radian = (angle * Math.PI) / 180;
+        const x = 140 + radius * Math.cos(radian) - 16;
+        const y = 140 + radius * Math.sin(radian) - 16;
+        
+        const $number = $(`<div class="clock-number" data-value="${i}">${i.toString().padStart(2, '0')}</div>`);
+        $number.css({ left: x + 'px', top: y + 'px' });
+        
+        if (i === selectedMinute) {
+          $number.addClass('selected');
+        }
+        
+        $number.on('click', function() {
+          selectedMinute = parseInt($(this).data('value'));
+          updateTimeDisplay();
+          updateClockHand();
+          renderClockNumbers(mode);
+        });
+        
+        $container.append($number);
+      }
     }
   }
   
