@@ -108,5 +108,32 @@
     </div>
   </div>
 
+  <!-- مودال ویرایش رزرو  -->
+  <div class="modal-overlay" id="editReserveModal" style="display: none;">
+    <div class="modal-content">
+      <button id="closeEditReserveModalBtn" class="modal-close">❌</button>
+      <h3>ویرایش رزرو</h3>
+
+      <label>نام مشتری:</label>
+      <input type="text" id="editCustomerNameInput" class="modal-input" placeholder="مثلاً علی رضایی">
+
+      <div class="time-row">
+        <div class="time-group">
+          <label>ساعت شروع:</label>
+          <input type="time" id="editStartReserveTimeInput" class="modal-input">
+        </div>
+        <div class="time-group">
+          <label>ساعت پایان:</label>
+          <input type="time" id="editEndReserveTimeInput" class="modal-input">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="saveEditReserveBtn" class="btn-save">ذخیره</button>
+        <button id="cancelEditReserveBtn" class="btn-cancel">لغو</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

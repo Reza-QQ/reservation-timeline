@@ -69,7 +69,13 @@
               const widthPercent = ((resEnd - resStart) / totalMinutes) * 100;
 
               const reservedBar = $(`
-                <div class="reservation-bar reserved" style="right:${leftPercent}%; width:${widthPercent}%;">
+                <div class="reservation-bar reserved editable" 
+                     style="right:${leftPercent}%; width:${widthPercent}%; cursor: pointer;"
+                     data-table-id="${table.id}"
+                     data-date="${res.date}"
+                     data-customer="${res.customer}"
+                     data-start-time="${res.start_time}"
+                     data-end-time="${res.end_time}">
                   <span>${res.end_time}</span>
                   <span>${res.customer}</span>
                   <span>${res.start_time}</span>
@@ -382,6 +388,78 @@ $(document).ready(function () {
       error: function (xhr) {
         $('#reserveModal').fadeOut(200);
         $('#errorMessage').text(xhr.responseText || 'خطا در ثبت رزرو.').fadeIn(300);
+        setTimeout(() => $('#errorMessage').fadeOut(300), 3000);
+      }
+    });
+  });
+
+
+
+  // ویرایش رزرو
+  let editReservationData = null;
+
+  $(document).on('click', '.reservation-bar.reserved.editable', function () {
+    const $bar = $(this);
+    
+    editReservationData = {
+      table_id: $bar.data('table-id'),
+      date: $bar.data('date'),
+      customer: $bar.data('customer'),
+      start_time: $bar.data('start-time'),
+      end_time: $bar.data('end-time')
+    };
+
+    $('#editCustomerNameInput').val(editReservationData.customer);
+    $('#editStartReserveTimeInput').val(editReservationData.start_time);
+    $('#editEndReserveTimeInput').val(editReservationData.end_time);
+
+    $('#editReserveModal').fadeIn(200);
+  });
+
+  $('#closeEditReserveModalBtn, #cancelEditReserveBtn').on('click', function () {
+    $('#editReserveModal').fadeOut(200);
+  });
+
+  $('#editReserveModal').on('click', function (e) {
+    if ($(e.target).is('#editReserveModal')) {
+      $('#editReserveModal').fadeOut(200);
+    }
+  });
+
+  $('#saveEditReserveBtn').on('click', function () {
+    const name = $('#editCustomerNameInput').val().trim();
+    const start = $('#editStartReserveTimeInput').val();
+    const end = $('#editEndReserveTimeInput').val();
+
+    if (!name || !start || !end || !editReservationData) {
+      $('#errorMessage').text('لطفاً همه فیلدها را کامل کنید.').fadeIn(300);
+      setTimeout(() => $('#errorMessage').fadeOut(300), 3000);
+      return;
+    }
+
+    const data = {
+      table_id: editReservationData.table_id,
+      date: editReservationData.date,
+      old_start_time: editReservationData.start_time,
+      customer: name,
+      start_time: start,
+      end_time: end
+    };
+
+    $.ajax({
+      url: 'edit_reservation.php',
+      method: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function (response) {
+        $('#editReserveModal').fadeOut(200);
+        $('#successMessage').text(response).fadeIn(300);
+        setTimeout(() => $('#successMessage').fadeOut(300), 3000);
+        loadTables(); // 🔁 به‌روزرسانی کارت‌ها
+      },
+      error: function (xhr) {
+        $('#editReserveModal').fadeOut(200);
+        $('#errorMessage').text(xhr.responseText || 'خطا در ویرایش رزرو.').fadeIn(300);
         setTimeout(() => $('#errorMessage').fadeOut(300), 3000);
       }
     });
