@@ -1,4 +1,4 @@
-# تایم‌لاین رزرو | Reservation Timeline
+# Reservation Timeline - تایم‌لاین رزرو
 
 ## 🇮🇷 فارسی
 
@@ -28,7 +28,6 @@ npm start
 ---
 
 ## 🇬🇧 English
-# Reservation Timeline - تایم‌لاین رزرو
 
 ## Project Overview
 **Reservation Timeline** is a table reservation management application designed for restaurants, billiard clubs, or any venue that needs to manage time-based reservations throughout the day. The application features a visual timeline interface that shows available and booked time slots.
