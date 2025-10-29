@@ -52,7 +52,7 @@
       $customer.removeClass('hidden');
       $endTime.removeClass('vertical hidden');
       
-      const fullText = `${$startTime.text()} - ${$customer.text()} - ${$endTime.text()}`;
+      const fullText = `${$endTime.text()} - ${$customer.text()} - ${$startTime.text()}`;
       
       // Very small blocks (less than 60px) - hide all text but show tooltip
       if (barWidth < 60) {
@@ -113,8 +113,8 @@
             const tableDiv = $(`
               <div class="table-box" data-id="${table.id}">
                 <div class="table-actions">
-                  <button class="btn-delete" data-id="${table.id}">حذف میز</button>
                   <button class="btn-reserve" data-id="${table.id}">رزرو ${table.name}</button>
+                  <button class="btn-delete" data-id="${table.id}">حذف میز</button>
                 </div>
                 <div class="table-reservation" id="reservation-${table.id}">
                   <div class="reservation-track">
@@ -355,20 +355,22 @@ $(document).ready(function () {
     }
   }
   
-  function updateClockHand() {
-    let angle;
-    
-    if (currentMode === 'hour') {
-      // Convert 24-hour to 12-hour position for the clock hand
-      const hour12 = selectedHour % 12 || 12;
-      angle = (hour12 / 12) * 360 - 90;
-    } else {
-      // Minutes
-      angle = (selectedMinute / 60) * 360 - 90;
-    }
-    
-    $('#clockHand').css('transform', `translateX(-50%) rotate(${angle}deg)`);
+function updateClockHand() {
+  let angle;
+
+  if (currentMode === 'hour') {
+    // Convert 24-hour to 12-hour position for the clock hand
+    const hour12 = selectedHour % 12 || 12;
+    angle = (hour12 / 12) * 360;
+  } else {
+    // Minutes
+    angle = (selectedMinute / 60) * 360;
   }
+
+  // اصلاح زاویه پایه (اگر ساعت 12 در بالا باشه، نیازی به offset نیست)
+  $('#clockHand').css('transform', `translateX(-50%) rotate(${angle}deg)`);
+}
+
   
   function updateTimeDisplay() {
     const timeStr = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute.toString().padStart(2, '0')}`;

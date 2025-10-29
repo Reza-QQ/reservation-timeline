@@ -87,6 +87,7 @@ body {
 
 .btn-insert-table {
   padding: 12px 24px;
+  margin: 5px;
   font-size: 14px;
   font-weight: 600;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -99,12 +100,7 @@ body {
 }
 
 .btn-insert-table:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-}
-
-.btn-insert-table:active {
-  transform: translateY(0);
 }
 
 .btn-settings {
@@ -113,27 +109,13 @@ body {
   padding: 10px;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-}
-
-.btn-settings:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  transform: rotate(90deg);
-}
-
-.btn-settings:hover .gear-icon {
-  filter: brightness(0) invert(1);
 }
 
 .gear-icon {
-  font-size: 22px;
-  transition: all 0.3s ease;
+  font-size: 16px;
 }
 
 .divider {
@@ -157,13 +139,14 @@ main {
   border: none;
   border-radius: var(--radius-lg);
   padding: 24px;
+  margin-bottom: 7px;
   box-shadow: var(--shadow-lg);
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .table-box:hover {
-  transform: translateY(-4px);
+  transform: scale(1.02);
   box-shadow: var(--shadow-xl);
 }
 
@@ -192,7 +175,6 @@ main {
 }
 
 .btn-reserve:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
@@ -202,16 +184,11 @@ main {
 }
 
 .btn-delete:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
 .table-reservation {
-  min-height: 70px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg-main);
-  padding: 12px;
+  min-height: 50px;
   position: relative;
   overflow: hidden;
 }
@@ -313,7 +290,6 @@ main {
 }
 
 .reserved.editable:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   border-color: rgba(255, 255, 255, 0.5);
   z-index: 10;
@@ -354,7 +330,7 @@ main {
   background: var(--bg-card);
   padding: 32px;
   border-radius: var(--radius-xl);
-  width: 400px;
+  width: 550px;
   max-width: 90vw;
   box-shadow: var(--shadow-xl);
   display: flex;
@@ -432,7 +408,6 @@ main {
 }
 
 .btn-save:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
@@ -456,19 +431,10 @@ main {
   padding: 8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.modal-close:hover {
-  background: var(--danger);
-  border-color: var(--danger);
-  transform: rotate(90deg);
 }
 
 .success-message,
@@ -517,7 +483,7 @@ main {
   color: var(--text-secondary);
   font-size: 16px;
   font-weight: 500;
-  margin: 16px 0;
+  margin: 40px 0 20px 0;
 }
 
 .time-row {
