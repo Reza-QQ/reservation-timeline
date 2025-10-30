@@ -1,4 +1,4 @@
-  function timeToMinutes(timeStr) {
+function timeToMinutes(timeStr) {
     const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m;
   }
@@ -125,7 +125,7 @@
             `);
 
             const tableReservations = reservations
-              .filter(r => r.table_id === table.id && r.date === today)
+              .filter(r => String(r.table_id) === String(table.id) && r.date === today)
               .sort((a, b) => timeToMinutes(a.start_time) - timeToMinutes(b.start_time));
 
             let lastEnd = startMinutes;
@@ -421,10 +421,28 @@ function updateClockHand() {
   updateClock();
   setInterval(updateClock, 10000);
 
+  // --- Persian Datepicker ---
+  // Initialize the picker lazily when the reserve modal/input is used.
+  function initReserveDatepicker() {
+    // guard to avoid double initialization
+    if ($('#reserveDateInput').data('pdp-initialized')) return;
 
+    $('#reserveDateInput').persianDatepicker({
+      format: 'YYYY-MM-DD',
+      initialValue: false,
+      autoClose: true,
+      calendarType: 'persian',
+      observer: true,
+      calendar: {
+        persian: {
+          leapYearMode: 'astronomical'
+        }
+      },
+      toolbox: { calendarSwitch: { enabled: false } }
+    });
 
-
-
+    $('#reserveDateInput').data('pdp-initialized', true);
+  }
 
   loadTables();
 
@@ -632,7 +650,10 @@ function updateClockHand() {
     const today = new Date().toISOString().split('T')[0];
 
     // مقداردهی فقط تاریخ، بدون ساعت
-    $('#reserveDateInput').val(today);
+    initReserveDatepicker();
+    //const date = new persianDate(new Date(new Date().setDate(new Date().getDate() + 1)));
+    const date = new persianDate(new Date());
+    $('#reserveDateInput').val(date.format('YYYY-MM-DD'));
     $('#customerNameInput').val('');
     $('#startReserveTimeInput').val('');
     $('#endReserveTimeInput').val('');
@@ -756,6 +777,42 @@ function updateClockHand() {
       error: function (xhr) {
         $('#editReserveModal').fadeOut(200);
         $('#errorMessage').text(xhr.responseText || 'خطا در ویرایش رزرو.').fadeIn(300);
+        setTimeout(() => $('#errorMessage').fadeOut(300), 3000);
+      }
+    });
+  });
+
+  // حذف رزرو
+  $('#deleteReservationBtn').on('click', function() {
+    
+    const name = $('#editCustomerNameInput').val().trim();
+    const start = $('#editStartReserveTimeInput').val();
+    const end = $('#editEndReserveTimeInput').val();
+
+    const data = {
+      table_id: editReservationData.table_id,
+      date: editReservationData.date,
+      old_start_time: editReservationData.start_time,
+      customer: name,
+      start_time: start,
+      end_time: end
+    };
+
+    // فرض: شناسه رزرو در متغیر editReservationId ذخیره شده
+    $.ajax({
+      url: 'delete_reservation.php',
+      method: 'POST',
+      data: JSON.stringify(data),
+      contentType: 'application/json',
+      success: function(response) {
+        $('#editReserveModal').fadeOut(200);
+        $('#successMessage').text(response).fadeIn(300);
+        setTimeout(() => $('#successMessage').fadeOut(300), 3000);
+        loadTables(); // 🔁 به‌روزرسانی کارت‌ها
+      },
+      error: function (xhr) {
+        $('#editReserveModal').fadeOut(200);
+        $('#errorMessage').text(xhr.responseText || 'خطا در حذف رزرو.').fadeIn(300);
         setTimeout(() => $('#errorMessage').fadeOut(300), 3000);
       }
     });

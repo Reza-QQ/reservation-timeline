@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>سیستم رزرو میز</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-date@1.1.0/dist/persian-date.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -85,7 +88,7 @@
       <h3 id="reserveTitle">رزرو میز</h3>
 
       <label>تاریخ رزرو:</label>
-      <input type="date" id="reserveDateInput" class="modal-input">
+      <input type="text" id="reserveDateInput" class="modal-input" placeholder="انتخاب تاریخ">
 
       <label>نام مشتری:</label>
       <input type="text" id="customerNameInput" class="modal-input" placeholder="مثلاً علی رضایی">
@@ -111,9 +114,6 @@
   <!-- مودال ویرایش رزرو  -->
   <div class="modal-overlay" id="editReserveModal" style="display: none;">
     <div class="modal-content">
-      <button id="closeEditReserveModalBtn" class="modal-close">❌</button>
-      <h3>ویرایش رزرو</h3>
-
       <label>نام مشتری:</label>
       <input type="text" id="editCustomerNameInput" class="modal-input" placeholder="مثلاً علی رضایی">
 
@@ -131,6 +131,7 @@
       <div class="modal-actions">
         <button id="saveEditReserveBtn" class="btn-save">ذخیره</button>
         <button id="cancelEditReserveBtn" class="btn-cancel">لغو</button>
+        <button id="deleteReservationBtn" class="btn-delete-reserve">حذف رزرو</button>
       </div>
     </div>
   </div>

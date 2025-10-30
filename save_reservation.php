@@ -12,6 +12,25 @@ if (
   exit;
 }
 
+// خواندن تنظیمات برنامه
+$settingsFile = 'settings.json';
+$settings = file_exists($settingsFile)
+  ? json_decode(file_get_contents($settingsFile), true)
+  : null;
+
+if (!$settings || !isset($settings['start_time'], $settings['end_time'])) {
+  http_response_code(500);
+  echo "تنظیمات برنامه یافت نشد.";
+  exit;
+}
+
+// بررسی بازه زمانی رزرو با بازه مجاز برنامه
+if ($data['start_time'] < $settings['start_time'] || $data['end_time'] > $settings['end_time']) {
+  http_response_code(400);
+  echo "بازه زمانی خارج از ساعت کاری است.";
+  exit;
+}
+
 // مسیر فایل رزروها
 $resFile = 'reservations.json';
 
@@ -36,6 +55,7 @@ foreach ($reservations as $res) {
 }
 
 // افزودن رزرو جدید
+$data['table_id'] = (string)$data['table_id'];
 $reservations[] = $data;
 
 // ذخیره در فایل
